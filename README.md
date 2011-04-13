@@ -9,3 +9,26 @@ UML shell is a small utility to boot a user mode linux kernel and run a shell (b
 inside it. If its built in, hostfs can be used to mount the host filesystem and
 use the files from there. 
 
+## Usage
+
+### Build a UML kernel in the usual way.
+
+	Eg. `make ARCH=um`
+
+	This will build the UML image and modules
+
+### Change into the Kernel directory and run the mkumlfs script
+
+	This will boot up the kernel and start a busybox shell.
+
+### Access the host filesystem if its available.
+
+	`mkdir /mnt`
+
+	`mount -t hostfs none /mnt`
+
+
+## Dependencies
+	
+	Currently they are fakeroot and busybox-static.
+	Both are available as packages of the same name on Debian/Ubuntu.
