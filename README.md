@@ -19,14 +19,13 @@ use the files from there.
 
 ### Change into the Kernel directory and run the mkumlfs script
 
-	This will boot up the kernel and start a busybox shell.
+	This will generate the initramfs, boot up the kernel and start a busybox shell.
 
 ### Access the host filesystem if its available.
 
 	`mkdir /mnt`
 
 	`mount -t hostfs none /mnt`
-
 
 ## Dependencies
 	
