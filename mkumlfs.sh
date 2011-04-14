@@ -35,7 +35,7 @@ chmod +x $ROOTDIR/init
 echo "making cpio"
 CPIOTMP=`mktemp`
 cd $ROOTDIR
-fakeroot sh -c 'find . |cpio -o -H newc|gzip -' > $CPIOTMP
+fakeroot sh -eu -c 'find . |cpio -o -H newc|gzip -' > $CPIOTMP
 cd -
 mv $CPIOTMP initramfs.uml.img
 
