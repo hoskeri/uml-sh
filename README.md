@@ -13,21 +13,21 @@ use the files from there.
 
 ### Build a UML kernel in the usual way.
 
-	Eg. `make ARCH=um`
+Eg. `make ARCH=um`
 
-	This will build the UML image and modules
+This will build the UML image and modules
 
 ### Change into the Kernel directory and run the mkumlfs script
 
-	This will generate the initramfs, boot up the kernel and start a busybox shell.
+This will generate the initramfs, boot up the kernel and start a busybox shell.
 
 ### Access the host filesystem if its available.
 
-	`mkdir /mnt`
+`mkdir /mnt`
 
-	`mount -t hostfs none /mnt`
+`mount -t hostfs none /mnt`
 
 ## Dependencies
-	
-	Currently they are fakeroot and busybox-static.
-	Both are available as packages of the same name on Debian/Ubuntu.
+
+Currently they are fakeroot and busybox-static and cpio
+All of them are available as packages of the same name on Debian/Ubuntu.
