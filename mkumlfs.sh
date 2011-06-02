@@ -3,6 +3,7 @@ set -eu
 
 # begin
 ROOTDIR=`mktemp -d`
+DEB_PACKAGES="libc6 module-init-tools libudev0 dmsetup libdevmapper1.02.1 libselinux1"
 
 # copy modules
 make ARCH=um modules_install INSTALL_MOD_PATH=$ROOTDIR
@@ -13,6 +14,25 @@ cp /bin/busybox $ROOTDIR/bin/
 for c in `busybox --list-full`; do
 	mkdir -p $ROOTDIR/`dirname $c`
 	ln -s /bin/busybox $ROOTDIR/$c
+done
+
+install_package() {
+	package=$1
+	echo installing package $package from system
+	for p in `dpkg -L $package`; 
+	do 
+		if [ -f $p ] && [ ! -f $ROOTDIR/$p ]
+		then
+			dir=`dirname $p`
+			mkdir -p $ROOTDIR/$dir 
+			fakeroot cp -p $p $ROOTDIR/$p
+		fi
+	done
+}
+
+for pkg in $DEB_PACKAGES
+do
+	install_package $pkg
 done
 
 # install init
@@ -43,4 +63,4 @@ mv $CPIOTMP initramfs.uml.img
 rm -rf $ROOTDIR
 
 # boot 
-./linux initrd=initramfs.uml.img quiet
+./linux mem=512M initrd=initramfs.uml.img quiet
