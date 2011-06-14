@@ -29,5 +29,5 @@ This will generate the initramfs, boot up the kernel and start a busybox shell.
 
 ## Dependencies
 
-Currently they are fakeroot and busybox-static and cpio
+Currently they are fakeroot, busybox-static and cpio
 All of them are available as packages of the same name on Debian/Ubuntu.
