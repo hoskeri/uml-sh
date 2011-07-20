@@ -41,14 +41,26 @@ then
 cat <<END > $ROOTDIR/init
 #!/bin/sh
 
-export PS1="\h \w \$ "
+mknod /dev/zero c 1 5
+mknod /dev/null c 1 3
+
+modprobe loop
+mknod /dev/loop0 b 7 0
+
+mknod /dev/ubda b 98 0
 
 mkdir /proc
 mount -t proc none /proc
+
 mkdir /sys
 mount -t sysfs none /sys
+mount -t hostfs /home/abhijit/play/kernel/sample /root
 
+mkdir /tmp
 hostname `hostname`-uml
+
+export PS1="\h \w \$ "
+cd /root/home/abhijit/play/kernel/sample
 busybox sh
 
 END
@@ -65,5 +77,11 @@ END
   rm -rf $ROOTDIR
 
 fi
+# create an extra disk to test code with
+if [ ! -f ~/.test.disk ]
+then
+	dd if=/dev/zero of=~/.test.disk bs=1 count=1 seek=4G
+fi
+
 # boot 
-./linux mem=512M initrd=initramfs.uml.img quiet
+./linux mem=512M ubd0=~/tmp/test.disk initrd=initramfs.uml.img 
