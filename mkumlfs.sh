@@ -6,7 +6,17 @@ then
   # begin rebuild
   ROOTDIR=`mktemp -d`
   DEB_PACKAGES="libc6 module-init-tools libudev0 dmsetup libdevmapper1.02.1 libselinux1"
-  
+
+  cleanup() {
+    set +e
+    echo "cleaning up"
+    rm -rf $ROOTDIR
+    set -e
+  }
+ 
+  # on interrupt, cleanup
+  trap cleanup 1 2 3 6 
+ 
   # copy modules
   make ARCH=um modules_install INSTALL_MOD_PATH=$ROOTDIR
   
@@ -14,27 +24,27 @@ then
   mkdir $ROOTDIR/bin/
   cp /bin/busybox $ROOTDIR/bin/
   for c in `busybox --list-full`; do
-  	mkdir -p $ROOTDIR/`dirname $c`
-  	ln -s /bin/busybox $ROOTDIR/$c
+    mkdir -p $ROOTDIR/`dirname $c`
+    ln -s /bin/busybox $ROOTDIR/$c
   done
   
   install_package() {
-  	package=$1
-  	echo installing package $package from system
-  	for p in `dpkg -L $package`; 
-  	do 
-  		if [ -f $p ] && [ ! -f $ROOTDIR/$p ]
-  		then
-  			dir=`dirname $p`
-  			mkdir -p $ROOTDIR/$dir 
-  			fakeroot cp -p $p $ROOTDIR/$p
-  		fi
-  	done
+    package=$1
+    echo installing package $package from system
+    for p in `dpkg -L $package`; 
+    do 
+      if [ -f $p ] && [ ! -f $ROOTDIR/$p ]
+      then
+        dir=`dirname $p`
+        mkdir -p $ROOTDIR/$dir 
+        fakeroot cp -p $p $ROOTDIR/$p
+      fi
+    done
   }
   
   for pkg in $DEB_PACKAGES
   do
-  	install_package $pkg
+    install_package $pkg
   done
   
   # install init
@@ -74,14 +84,14 @@ END
   mv $CPIOTMP initramfs.uml.img
   
   # end
-  rm -rf $ROOTDIR
+  cleanup
 
 fi
 # create an extra disk to test code with
 if [ ! -f ~/.test.disk ]
 then
-	dd if=/dev/zero of=~/.test.disk bs=1 count=1 seek=4G
+  dd if=/dev/zero of=~/.test.disk bs=1 count=1 seek=4G
 fi
 
 # boot 
-./linux mem=512M ubd0=~/tmp/test.disk initrd=initramfs.uml.img 
+./linux mem=512M ubd0=~/.test.disk initrd=initramfs.uml.img 
