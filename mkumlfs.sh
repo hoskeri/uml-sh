@@ -70,7 +70,7 @@ mkdir /tmp
 hostname `hostname`-uml
 
 export PS1="\h \w \$ "
-cd /root/home/abhijit/play/kernel/sample
+cd /root/home/abhijit/play/projects/sample/
 busybox sh
 
 END
