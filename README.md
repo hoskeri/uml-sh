@@ -44,5 +44,5 @@ supported by the kernel. You can do it yourself as follows:
 
 ## Dependencies
 
-Currently they are fakeroot, busybox-static and cpio
+Currently they are fakeroot, busybox-static and cpio.
 All of these are available as packages of the same name on Debian/Ubuntu.

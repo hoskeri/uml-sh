@@ -3,7 +3,7 @@
 set -eu
 
 #detect installation location
-INSTALLDIR=$(dirname `readlink -f $0`)
+INSTALL_DIR=$(dirname `readlink -f $0`)
 
 #rebuild initramfs
 if [ ! -z "${REBUILD:-}" ]
