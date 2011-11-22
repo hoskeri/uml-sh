@@ -93,13 +93,13 @@ END
 
 fi
 # create an extra disk to test code with
-if [ ! -f ~/.test.disk ]
+if [ ! -f $HOME/.test.disk ]
 then
-  dd if=/dev/zero of=~/.test.disk bs=1 count=1 seek=4G
+  dd if=/dev/zero of=$HOME/.test.disk bs=1 count=1 seek=4G
 fi
 
 # boot 
-ARGS="./linux mem=512M ubd0=~/.test.disk initrd=initramfs.uml.img"
+ARGS="./linux mem=512M ubd0=$HOME/.test.disk initrd=initramfs.uml.img"
 if [ ! -z "${GDB:-}" ]
 then
 	ARGS="gdb $INSTALL_DIR/gdbcommands.txt --args $ARGS"
