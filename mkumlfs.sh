@@ -102,6 +102,6 @@ fi
 ARGS="./linux mem=512M ubd0=$HOME/.test.disk initrd=initramfs.uml.img"
 if [ ! -z "${GDB:-}" ]
 then
-	ARGS="gdb $INSTALL_DIR/gdbcommands.txt --args $ARGS"
+	ARGS="gdb -x $INSTALL_DIR/gdbcommands.txt --args $ARGS"
 fi
 $ARGS
