@@ -15,18 +15,20 @@ the host filesystem and use the files from there.
 
 Eg. `make ARCH=um`
 
-This will build the UML image and modules
+This will build the UML image and modules. You could use the provided
+`kernel-config-example` as your `.config` to have a minimal kernel suitable for
+hacking and debugging.
 
 ### Change into the Kernel directory and run the mkumlfs script
 
-    # REBUILD=1 /path/to/mkumlfs.sh
+    REBUILD=1 /path/to/mkumlfs.sh
 
 This will install the modules, packages, initscript, generate the initramfs,
 boot up the kernel and start a busybox shell.
 
 ### GDB Support
 
-    # GDB=1 /path/to/mkumlfs.sh
+    GDB=1 /path/to/mkumlfs.sh
 
 This will start the kernel under gdb. Set your breakpoints, etc. and the hit
 `r`.  Some gdb commands necessary for running UML are read from gdbcommands.txt
@@ -34,11 +36,13 @@ in the uml-sh installation directory.
 
 ### Access the host filesystem if its available.
 
-`mkdir /mnt`
+mkumlfs.sh will attempt to mount the host filesystem using `hostfs` if
+supported by the kernel. You can do it yourself as follows:
 
-`mount -t hostfs none /mnt`
+    mkdir /mnt
+    mount -t hostfs none /mnt
 
 ## Dependencies
 
 Currently they are fakeroot, busybox-static and cpio
-All of them are available as packages of the same name on Debian/Ubuntu.
+All of these are available as packages of the same name on Debian/Ubuntu.
