@@ -1,7 +1,12 @@
 #!/bin/bash
+
 set -eu
 
-if [ ! -z "${1:-}" ]
+#detect installation location
+INSTALLDIR=$(dirname `readlink -f $0`)
+
+#rebuild initramfs
+if [ ! -z "${REBUILD:-}" ]
 then
   # begin rebuild
   ROOTDIR=`mktemp -d`
@@ -94,4 +99,9 @@ then
 fi
 
 # boot 
-./linux mem=512M ubd0=~/.test.disk initrd=initramfs.uml.img 
+ARGS="./linux mem=512M ubd0=~/.test.disk initrd=initramfs.uml.img"
+if [ ! -z "${GDB:-}" ]
+then
+	ARGS="gdb $INSTALL_DIR/gdbcommands.txt --args $ARGS"
+fi
+$ARGS
