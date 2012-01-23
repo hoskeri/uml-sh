@@ -10,7 +10,7 @@ if [ ! -z "${REBUILD:-}" ]
 then
   # begin rebuild
   ROOTDIR=`mktemp -d`
-  DEB_PACKAGES="libc6 module-init-tools libudev0 dmsetup libdevmapper1.02.1 libselinux1"
+  DEB_PACKAGES="libc6 module-init-tools libudev0 dmsetup libdevmapper1.02.1 libselinux1 libncurses5 bash strace"
 
   cleanup() {
     set +e
@@ -60,6 +60,7 @@ mknod /dev/zero c 1 5
 mknod /dev/null c 1 3
 
 modprobe loop
+modprobe dm_mod
 mknod /dev/loop0 b 7 0
 
 mknod /dev/ubda b 98 0
@@ -74,9 +75,9 @@ mount -t hostfs /home/abhijit/play/kernel/sample /root
 mkdir /tmp
 hostname `hostname`-uml
 
-export PS1="\h \w \$ "
-cd /root/home/abhijit/play/projects/sample/
-busybox sh
+
+export PS1="\w \$ "
+bash --posix
 
 END
   chmod +x $ROOTDIR/init
@@ -99,9 +100,12 @@ then
 fi
 
 # boot 
-ARGS="./linux mem=512M ubd0=$HOME/.test.disk initrd=initramfs.uml.img"
+ARGS="./linux mem=512M ubd0=$HOME/.test.disk initrd=initramfs.uml.img $@"
 if [ ! -z "${GDB:-}" ]
 then
 	ARGS="gdb -x $INSTALL_DIR/gdbcommands.txt --args $ARGS"
 fi
-$ARGS
+$ARGS || true # ignore return value to allow cleanup to proceed
+
+# reset the terminal in case something bad happens
+reset
