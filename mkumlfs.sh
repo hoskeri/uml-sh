@@ -10,7 +10,7 @@ if [ ! -z "${REBUILD:-}" ]
 then
   # begin rebuild
   ROOTDIR=`mktemp -d`
-  DEB_PACKAGES="libc6 module-init-tools libudev0 dmsetup libdevmapper1.02.1 libselinux1 libncurses5 bash strace"
+  DEB_PACKAGES="libc6 module-init-tools libudev0 dmsetup libdevmapper1.02.1 libselinux1 libncurses5 libtinfo5 bash strace"
 
   cleanup() {
     set +e
@@ -18,13 +18,13 @@ then
     rm -rf $ROOTDIR
     set -e
   }
- 
+
   # on interrupt, cleanup
-  trap cleanup 1 2 3 6 
- 
+  trap cleanup 1 2 3 6
+
   # copy modules
   make ARCH=um modules_install INSTALL_MOD_PATH=$ROOTDIR
-  
+
   # copy busybox
   mkdir $ROOTDIR/bin/
   cp /bin/busybox $ROOTDIR/bin/
@@ -32,26 +32,26 @@ then
     mkdir -p $ROOTDIR/`dirname $c`
     ln -s /bin/busybox $ROOTDIR/$c
   done
-  
+
   install_package() {
     package=$1
     echo installing package $package from system
-    for p in `dpkg -L $package`; 
-    do 
+    for p in `dpkg -L $package`;
+    do
       if [ -f $p ] && [ ! -f $ROOTDIR/$p ]
       then
         dir=`dirname $p`
-        mkdir -p $ROOTDIR/$dir 
+        mkdir -p $ROOTDIR/$dir
         fakeroot cp -p $p $ROOTDIR/$p
       fi
     done
   }
-  
+
   for pkg in $DEB_PACKAGES
   do
     install_package $pkg
   done
-  
+
   # install init
 cat <<END > $ROOTDIR/init
 #!/bin/sh
@@ -81,14 +81,14 @@ bash --posix
 
 END
   chmod +x $ROOTDIR/init
-  
+
   echo "making cpio"
   CPIOTMP=`mktemp`
   cd $ROOTDIR
   fakeroot sh -eu -c 'find . |cpio -o -H newc|gzip -' > $CPIOTMP
   cd -
   mv $CPIOTMP initramfs.uml.img
-  
+
   # end
   cleanup
 
@@ -99,7 +99,7 @@ then
   dd if=/dev/zero of=$HOME/.test.disk bs=1 count=1 seek=4G
 fi
 
-# boot 
+# boot
 ARGS="./linux mem=512M ubd0=$HOME/.test.disk initrd=initramfs.uml.img $@"
 if [ ! -z "${GDB:-}" ]
 then
@@ -107,5 +107,5 @@ then
 fi
 $ARGS || true # ignore return value to allow cleanup to proceed
 
-# reset the terminal in case something bad happens
+# reset terminal
 reset
